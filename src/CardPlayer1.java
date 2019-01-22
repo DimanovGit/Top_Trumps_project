@@ -1,12 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player1 {
+public class CardPlayer1 {
 	
 	private List<Card> deck = new ArrayList<Card>();
 	private String name;
 	
-	public Player1(String name) {
+	public CardPlayer1(String name) {
 		this.name = name;
 	}
 
