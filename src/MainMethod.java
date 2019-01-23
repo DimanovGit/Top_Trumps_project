@@ -51,21 +51,51 @@ public class MainMethod {
         
     }
     
-    public static Card doBattle(Card card1, Card card2, Attribute attribute) {
-    	System.out.println(card1);
-    	System.out.println(card2);
-    	System.out.println(attribute);
-    	
-    	if (card1.getAttributeValue(attribute) > card2.getAttributeValue(attribute)) {
-    		System.out.println("Card 1 Wins");
-    		return card1;
-    	}
-    	if (card2.getAttributeValue(attribute) > card1.getAttributeValue(attribute)) {
-    		System.out.println("Card 2 Wins");
-    		return card2;
-    	}
-    	System.out.println("DRAW");
-    	return null;
+   public static Card doBattle(List<Card> cards, String attribute) {
+    	int n=0;
+    	int max=0;
+    	int index=0;
+    		for(Card card:cards) {
+    			if(attribute.equals("size")) {
+    				if(card.getSize()>max) {
+        				max=card.getSize();
+        				index=n;
+        			}
+        			n++;
+    			}
+    			if(attribute.equals("speed")) {
+    				if(card.getSize()>max) {
+        				max=card.getSpeed();
+        				index=n;
+        			}
+        			n++;
+    			}
+    			if(attribute.equals("range")) {
+    				if(card.getSize()>max) {
+        				max=card.getRange();
+        				index=n;
+        			}
+        			n++;
+    			}
+    			if(attribute.equals("firepower")) {
+    				if(card.getSize()>max) {
+        				max=card.getFirepower();
+        				index=n;
+        			}
+        			n++;
+    			}
+    			if(attribute.equals("cargo")) {
+    				if(card.getSize()>max) {
+        				max=card.getCargo();
+        				index=n;
+        			}
+        			n++;
+    			}
+    			
+    		}
+    		
+    	System.out.println("Winner is number of "+index);
+    	return cards.get(index);
     }
     
     
