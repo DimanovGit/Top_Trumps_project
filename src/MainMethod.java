@@ -11,7 +11,7 @@ public class MainMethod {
         List<Card> cards = new ArrayList<>();
         try (BufferedReader br =
                 //directory is hard coded; change your directory accordingly; we'll fix that once we implement the GUI.
-        		new BufferedReader(new FileReader("C:\\Users\\nelth\\Desktop\\MScIT_TeamProject_TemplateProject\\StarCitizenDeck.txt"))) {
+        		new BufferedReader(new FileReader("StarCitizenDeck.txt"))) {
         	String line=br.readLine();
         	while ((line = br.readLine()) != null) {
         		String[] splitLine = line.split(" ");
