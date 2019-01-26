@@ -165,6 +165,7 @@ public class MainMethod {
     }
     
     private static Attribute getAttributeFromPlayer() {
+    	
     	while (true) {
     		Scanner reader = new Scanner(System.in);
         	String input = reader.nextLine();
