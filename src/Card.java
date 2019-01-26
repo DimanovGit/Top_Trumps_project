@@ -41,6 +41,18 @@ public class Card {
 		return attributes.get(attribute);
 	}
 	
+	public Attribute getHighestAttribute() {
+		int highestAttributeValue = 0;
+		Attribute highestAttribute = null;
+		for (Attribute attribute : Attribute.values()) {
+			if (this.getAttributeValue(attribute) > highestAttributeValue) {
+				highestAttributeValue = this.getAttributeValue(attribute);
+				highestAttribute = attribute;
+			}
+		}
+		return highestAttribute;
+	}
+	
 	public String toString() {
 		return description + " " + getSize() + " " + getSpeed() + " " + getRange() + " " + getFirepower() + " " + getCargo();
 	}
