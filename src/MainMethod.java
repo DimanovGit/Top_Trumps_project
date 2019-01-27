@@ -99,7 +99,7 @@ public class MainMethod {
     	List<Card> cardsAfterDraw = new ArrayList<Card>();
     	CardPlayer1 winningPlayer = null;
     	while (true) {
-    		System.out.println("Active player is: " + activePlayer.getName());
+    		System.out.println("Trumping player is: " + activePlayer.getName());
         	if (PLAYER.equals(activePlayer.getName())) {
         		System.out.println("Your card is: " + activePlayer.getFirstCard());
         		System.out.println("Choose attribute: ");
