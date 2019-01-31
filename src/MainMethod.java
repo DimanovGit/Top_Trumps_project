@@ -149,7 +149,7 @@ public class MainMethod {
 //            
 //        	Class.forName("org.postgresql.Driver");
 //        	
-//            System.out.println("! Database Connection Established !!!");
+//            System.out.println("! Database Connection Established !");
 //            
 //            Statement statement = connection.createStatement();
 //            System.out.println("Executing query:");
