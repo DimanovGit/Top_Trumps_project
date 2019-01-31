@@ -149,7 +149,7 @@ public class MainMethod {
 //            
 //        	Class.forName("org.postgresql.Driver");
 //        	
-//            System.out.println("!!! DB Connection established !!!");
+//            System.out.println("! Database Connection Established !!!");
 //            
 //            Statement statement = connection.createStatement();
 //            System.out.println("Executing query:");
@@ -203,10 +203,10 @@ public class MainMethod {
 //            System.out.println("Finished fetching the data.");
 //            
 //        } catch (SQLException e) {
-//        	System.out.println("Connection Failure !!!");
+//        	System.out.println("Connection Failure!");
 //        	e.printStackTrace();
 //        } catch (ClassNotFoundException e) {
-//        	System.out.println("PostgreSQL JDBC driver not found !!!");
+//        	System.out.println("PostgreSQL JDBC driver not found!");
 //        	e.printStackTrace();
 //        }
 //    }
