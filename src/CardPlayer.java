@@ -1,15 +1,27 @@
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CardPlayer1 {
+public class CardPlayer {
 	
 	private List<Card> deck = new ArrayList<Card>();
 	private String name;
 	private boolean hasLost;
+	private int numOfRoundsWon; 
+	private int drawnGames;
 	
-	public CardPlayer1(String name) {
+	
+	
+	
+	public CardPlayer(String name) {
 		this.name = name;
 		this.hasLost = false;
+		this.drawnGames=0;
+		this.numOfRoundsWon=0;
 	}
 
 	public void addCard(Card card) {
@@ -26,6 +38,27 @@ public class CardPlayer1 {
 	
 	public void removeFirstCard() {
 		deck.remove(0);
+	}
+
+	
+
+	
+
+	public void addRoundWin() {
+		numOfRoundsWon++;
+			
+	}
+	
+	public void addDrawToStats() {
+		drawnGames++;
+	}
+	
+	public int getNumOfRoundsWon() {
+		return numOfRoundsWon;
+	}
+	
+	public int getDraws() {
+		return drawnGames;
 	}
 	
 	public boolean hasLost() {

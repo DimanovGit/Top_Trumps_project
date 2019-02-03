@@ -15,9 +15,10 @@ public class MainMethod {
         int numPlayers = 5;
         List<Card> cards = getDeckFromFile();
         Collections.shuffle(cards);
-        List<CardPlayer1> players = new ArrayList<CardPlayer1>();
+        List<CardPlayer> players = new ArrayList<CardPlayer>();
         giveCardsToPlayers(players, cards, numPlayers);
         startGame(players);
+       
     }
     
     
@@ -45,11 +46,12 @@ public class MainMethod {
     	return cards;
     }
     
-    private static CardPlayer1 doBattle(List<CardPlayer1> players, Attribute attribute) {
-        CardPlayer1 winningPlayer = null;
+    private static CardPlayer doBattle(List<CardPlayer> players, Attribute attribute) {
+    	List<CardPlayer> drawnPlayers = new ArrayList<>();
+        CardPlayer winningPlayer = null;
     	int maxValue = 0;
     	
-    	for(CardPlayer1 player : players) {
+    	for(CardPlayer player : players) {
     		if (player.hasLost()) {
     			continue;
     		}
@@ -59,25 +61,38 @@ public class MainMethod {
     		if (attributeValue > maxValue) {
     			winningPlayer = player;
     			maxValue = attributeValue;
+    			drawnPlayers.clear();
     		} else if (attributeValue == maxValue) {
-    			winningPlayer = null;
+    			drawnPlayers.add(player);
     		}
     	}
-    	if (winningPlayer != null) {
+    	
+    	if (drawnPlayers.size() == 0) {
     		System.out.println("Winning player is: " + winningPlayer.getName());
+    		winningPlayer.addRoundWin();
+    		
     	} else {
-    		System.out.println("DRAW!");
+    		System.out.println("DRAW: " + winningPlayer.getName());
+    		winningPlayer.addDrawToStats();
+    		winningPlayer = null;
+    		for (CardPlayer player : drawnPlayers) {
+    			System.out.println("DRAW: " + player.getName());
+    			player.addDrawToStats();
+    		}
     	}
-    	return winningPlayer;
+		return winningPlayer;
+    	
     }
     
     
-    private static void giveCardsToPlayers(List<CardPlayer1> players, List<Card> cards, int numPlayers) {
+    
+    public static void giveCardsToPlayers(List<CardPlayer> players, List<Card> cards, int numPlayers) {
+
     	for (int i = 0; i < numPlayers; i++) {
     		if (i == 0) {
-    			players.add(new CardPlayer1("Player"));
+    			players.add(new CardPlayer("Player"));
     		} else {
-    			players.add(new CardPlayer1("AI-" + i));
+    			players.add(new CardPlayer("AI-" + i));
     		}
         	for (int j = i * (cards.size()/numPlayers); j < (i+1) * (cards.size()/numPlayers); j++) {
         		players.get(i).addCard(cards.get(j));
@@ -94,10 +109,10 @@ public class MainMethod {
         }
     }
     
-    private static void startGame(List<CardPlayer1> players) {
-    	CardPlayer1 activePlayer = players.get(new Random().nextInt(players.size()));
+    private static void startGame(List<CardPlayer> players) {
+    	CardPlayer activePlayer = players.get(new Random().nextInt(players.size()));
     	List<Card> cardsAfterDraw = new ArrayList<Card>();
-    	CardPlayer1 winningPlayer = null;
+    	CardPlayer winningPlayer = null;
     	while (true) {
     		System.out.println("Trumping player is: " + activePlayer.getName());
         	if (PLAYER.equals(activePlayer.getName())) {
@@ -116,14 +131,22 @@ public class MainMethod {
         	checkIfGameHasEnded(players);
         	if (winningPlayer != null) {
         		activePlayer = winningPlayer;
-        	}
+        	}try{
+                 Thread.sleep(12);
+             }
+             catch(InterruptedException ex){
+                 Thread.currentThread().interrupt();
+             }
     	}
+    	
+    	
     }
+   
     
-    private static void checkIfGameHasEnded(List<CardPlayer1> players) {
+    private static void checkIfGameHasEnded(List<CardPlayer> players) {
     	int activePlayers = 0;
-    	CardPlayer1 lastActivePlayer = null;
-    	for (CardPlayer1 player : players) {
+    	CardPlayer lastActivePlayer = null;
+    	for (CardPlayer player : players) {
     		if (!player.hasLost()) {
     			activePlayers++;
     			lastActivePlayer = player;
@@ -133,13 +156,14 @@ public class MainMethod {
     	if (activePlayers == 1) {
     		System.out.println("THE GAME HAS ENDED!");
     		System.out.println("The winner is: " + lastActivePlayer.getName());
+    		writePlayerStatsToFile(players);
     		System.exit(0);
     	}
     }
     
-    private static void sortOutCardsAfterBattle(List<CardPlayer1> players, CardPlayer1 winningPlayer, List<Card> cardsAfterDraw) {
+    private static void sortOutCardsAfterBattle(List<CardPlayer> players, CardPlayer winningPlayer, List<Card> cardsAfterDraw) {
     	if (winningPlayer == null) {
-    		for (CardPlayer1 player : players) {
+    		for (CardPlayer player : players) {
     			if (player.hasLost()) {
     				continue;
     			}
@@ -149,7 +173,7 @@ public class MainMethod {
     	} else {
     		winningPlayer.getDeck().addAll(cardsAfterDraw);
     		cardsAfterDraw.clear();
-    		for (CardPlayer1 player : players) {
+    		for (CardPlayer player : players) {
     			if (player.hasLost()) {
     				continue;
     			}
@@ -157,12 +181,14 @@ public class MainMethod {
     			player.removeFirstCard();
     		}
     	}
-    	for (CardPlayer1 player : players) {
+    	for (CardPlayer player : players) {
 			if (player.getDeck().isEmpty()) {
 				player.hasLost(true);
 			}
 		}
     }
+    
+    
     
     private static Attribute getAttributeFromPlayer() {
     	
@@ -177,5 +203,12 @@ public class MainMethod {
         	}
     	}
     }
+    
+    private static void writePlayerStatsToFile(List<CardPlayer> players) {
+    	for (CardPlayer player : players) {
+    		System.out.println(player.getName() + ": W-" + player.getNumOfRoundsWon() + " D-" + player.getDraws());
+    	}
+    }
+    
 
 } 
