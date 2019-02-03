@@ -114,7 +114,11 @@ public class MainMethod {
     	CardPlayer activePlayer = players.get(new Random().nextInt(players.size()));
     	List<Card> cardsAfterDraw = new ArrayList<Card>();
     	CardPlayer winningPlayer = null;
+    	int currentRound = 1;
+    	int draws = 0;
+    	System.out.println("----------------------------------------------");
     	while (true) {
+    		System.out.println("Round: " + currentRound);
     		System.out.println("Trumping player is: " + activePlayer.getName());
         	if (PLAYER.equals(activePlayer.getName())) {
         		System.out.println("Your card is: " + activePlayer.getFirstCard());
@@ -129,13 +133,15 @@ public class MainMethod {
         	sortOutCardsAfterBattle(players, winningPlayer, cardsAfterDraw);
         	System.out.println("Number of cards in the pile: {" + cardsAfterDraw.size() + "}");
         	System.out.println("----------------------------------------------");
-        	checkIfGameHasEnded(players);
         	if (winningPlayer != null) {
         		activePlayer = winningPlayer;
-        	}try{
+        	} else {
+        		draws++;
+        	}
+        	checkIfGameHasEnded(players, currentRound++, draws);
+        	try {
                  Thread.sleep(12);
-             }
-             catch(InterruptedException ex){
+             } catch(InterruptedException ex){
                  Thread.currentThread().interrupt();
              }
     	}
@@ -144,7 +150,7 @@ public class MainMethod {
     }
    
     
-    private static void checkIfGameHasEnded(List<CardPlayer> players) {
+    private static void checkIfGameHasEnded(List<CardPlayer> players, int currentRound, int draws) {
     	int activePlayers = 0;
     	CardPlayer lastActivePlayer = null;
     	for (CardPlayer player : players) {
@@ -157,83 +163,97 @@ public class MainMethod {
     	if (activePlayers == 1) {
     		System.out.println("THE GAME HAS ENDED!");
     		System.out.println("The winner is: " + lastActivePlayer.getName());
-    		connectToDatabase(lastActivePlayer.getName());
-    		writePlayerStatsToFile(players);
+    		saveToDatabase(players, lastActivePlayer, currentRound, draws);
+    		saveToFile(players, lastActivePlayer, currentRound, draws);
     		System.exit(0);
     	}
     }
     
     
-    private static void connectToDatabase(String lastActivePlayer) {
+    private static void saveToDatabase(List<CardPlayer> players, CardPlayer winningPlayer, int currentRound, int draws) {
         
-        String url = "jdbc:postgresql://yacata.dcs.gla.ac.uk:5432/m_18_2416192l";
-        String user = "m_18_2416192l";
-        String password = "2416192l";
+    	System.out.println("----------------------------------------------");
+        System.out.println("INFO FOR DB");
+        System.out.println("Player that won: " + winningPlayer.getName());
+        System.out.println("Rounds played: " + currentRound);
+        System.out.println("Number of draws: " + draws);
+        for (CardPlayer player : players) {
+    		System.out.println(player.getName() + ": W-" + player.getNumOfRoundsWon() + " D-" + player.getDraws());
+    	}
         
-        try (Connection connection = DriverManager.getConnection(url, user, password)){
-            
-        	Class.forName("org.postgresql.Driver");
-        	
-            System.out.println("! Database Connection Established !");
-            
-            Statement statement = connection.createStatement();
-            System.out.println("Executing query:");
-            
-            
-            /** Query for Updating values in the table **/
-            PreparedStatement st = connection.prepareStatement("INSERT INTO public.game_info (game_id, n_rounds, n_draws, winner, player1_rounds_won, player2_rounds_won, player3_rounds_won, player4_rounds_won, player5_rounds_won) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            st.setInt(1, 9);
-            st.setInt(2, 52);
-            st.setInt(3, 4);
-            st.setString(4, lastActivePlayer);
-            st.setInt(5, 4);
-            st.setInt(6, 8);
-            st.setInt(7, 14);
-            st.setInt(8, 5);
-            st.setInt(9, 3);
-            st.executeUpdate();
-            
-            
-            /** Query for Selecting data from the table and printing it **/
-            String query = "SELECT * FROM public.game_info ORDER BY game_id DESC LIMIT 1";
-            ResultSet resultSet = statement.executeQuery(query);
-            
-            String game_id = null;
-            String n_rounds = null;
-            String n_draws = null;
-            String winner = null;
-            String player1_wins = null;
-            String player2_wins = null;
-            String player3_wins = null;
-            String player4_wins = null;
-            String player5_wins = null;
-            
-            while (resultSet.next()) {
-            	game_id = resultSet.getString("game_id");
-                n_rounds = resultSet.getString("n_rounds");
-                n_draws = resultSet.getString("n_draws");
-                winner = resultSet.getString("winner");
-                player1_wins = resultSet.getString("player1_rounds_won");
-                player2_wins = resultSet.getString("player2_rounds_won");
-                player3_wins = resultSet.getString("player3_rounds_won");
-                player4_wins = resultSet.getString("player4_rounds_won");
-                player5_wins = resultSet.getString("player5_rounds_won");
-            	
-            	System.out.println("Game ID: " + game_id);
-            	System.out.println("Winner: "+ winner);
-            	System.out.println("Number of rounds: " + n_rounds);
-            	System.out.println("-------------------");
-            }
-            
-            System.out.println("Finished fetching the data.");
-            
-        } catch (SQLException e) {
-        	System.out.println("Connection Failure!");
-        	e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-        	System.out.println("PostgreSQL JDBC driver not found!");
-        	e.printStackTrace();
-        }
+        
+        
+        
+        
+//        
+//        String url = "jdbc:postgresql://yacata.dcs.gla.ac.uk:5432/m_18_2416192l";
+//        String user = "m_18_2416192l";
+//        String password = "2416192l";
+//        
+//        try (Connection connection = DriverManager.getConnection(url, user, password)){
+//            
+//        	Class.forName("org.postgresql.Driver");
+//        	
+//            System.out.println("! Database Connection Established !");
+//            
+//            Statement statement = connection.createStatement();
+//            System.out.println("Executing query:");
+//            
+//            
+//            /** Query for Updating values in the table **/
+//            PreparedStatement st = connection.prepareStatement("INSERT INTO public.game_info (game_id, n_rounds, n_draws, winner, player1_rounds_won, player2_rounds_won, player3_rounds_won, player4_rounds_won, player5_rounds_won) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+//            st.setInt(1, 9);
+//            st.setInt(2, 52);
+//            st.setInt(3, 4);
+//            st.setString(4, lastActivePlayer);
+//            st.setInt(5, 4);
+//            st.setInt(6, 8);
+//            st.setInt(7, 14);
+//            st.setInt(8, 5);
+//            st.setInt(9, 3);
+//            st.executeUpdate();
+//            
+//            
+//            /** Query for Selecting data from the table and printing it **/
+//            String query = "SELECT * FROM public.game_info ORDER BY game_id DESC LIMIT 1";
+//            ResultSet resultSet = statement.executeQuery(query);
+//            
+//            String game_id = null;
+//            String n_rounds = null;
+//            String n_draws = null;
+//            String winner = null;
+//            String player1_wins = null;
+//            String player2_wins = null;
+//            String player3_wins = null;
+//            String player4_wins = null;
+//            String player5_wins = null;
+//            
+//            while (resultSet.next()) {
+//            	game_id = resultSet.getString("game_id");
+//                n_rounds = resultSet.getString("n_rounds");
+//                n_draws = resultSet.getString("n_draws");
+//                winner = resultSet.getString("winner");
+//                player1_wins = resultSet.getString("player1_rounds_won");
+//                player2_wins = resultSet.getString("player2_rounds_won");
+//                player3_wins = resultSet.getString("player3_rounds_won");
+//                player4_wins = resultSet.getString("player4_rounds_won");
+//                player5_wins = resultSet.getString("player5_rounds_won");
+//            	
+//            	System.out.println("Game ID: " + game_id);
+//            	System.out.println("Winner: "+ winner);
+//            	System.out.println("Number of rounds: " + n_rounds);
+//            	System.out.println("-------------------");
+//            }
+//            
+//            System.out.println("Finished fetching the data.");
+//            
+//        } catch (SQLException e) {
+//        	System.out.println("Connection Failure!");
+//        	e.printStackTrace();
+//        } catch (ClassNotFoundException e) {
+//        	System.out.println("PostgreSQL JDBC driver not found!");
+//        	e.printStackTrace();
+//        }
     }
     
 
@@ -272,7 +292,8 @@ public class MainMethod {
     		Scanner reader = new Scanner(System.in);
         	String input = reader.nextLine();
     		try {
-        		Attribute attribute = Attribute.valueOf(input);
+        		Attribute attribute = Attribute.getValue(input);
+        		System.out.println("You chose: " + attribute.toString());
         		return attribute;
         	} catch (Exception e) {
         		System.out.println("That's an invalid attribute, try again!");
@@ -280,8 +301,13 @@ public class MainMethod {
     	}
     }
     
-    private static void writePlayerStatsToFile(List<CardPlayer> players) {
-    	for (CardPlayer player : players) {
+    private static void saveToFile(List<CardPlayer> players, CardPlayer winningPlayer, int currentRound, int draws) {
+    	System.out.println("----------------------------------------------");
+        System.out.println("INFO FOR FILE");
+        System.out.println("Player that won: " + winningPlayer.getName());
+        System.out.println("Rounds played: " + currentRound);
+        System.out.println("Number of draws: " + draws);
+        for (CardPlayer player : players) {
     		System.out.println(player.getName() + ": W-" + player.getNumOfRoundsWon() + " D-" + player.getDraws());
     	}
     }
