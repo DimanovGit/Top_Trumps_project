@@ -185,7 +185,7 @@ public class MainMethod {
         
         
         
-//        
+        
 //        String url = "jdbc:postgresql://yacata.dcs.gla.ac.uk:5432/m_18_2416192l";
 //        String user = "m_18_2416192l";
 //        String password = "2416192l";
@@ -201,16 +201,15 @@ public class MainMethod {
 //            
 //            
 //            /** Query for Updating values in the table **/
-//            PreparedStatement st = connection.prepareStatement("INSERT INTO public.game_info (game_id, n_rounds, n_draws, winner, player1_rounds_won, player2_rounds_won, player3_rounds_won, player4_rounds_won, player5_rounds_won) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-//            st.setInt(1, 9);
-//            st.setInt(2, 52);
-//            st.setInt(3, 4);
-//            st.setString(4, lastActivePlayer);
-//            st.setInt(5, 4);
-//            st.setInt(6, 8);
-//            st.setInt(7, 14);
-//            st.setInt(8, 5);
-//            st.setInt(9, 3);
+//            PreparedStatement st = connection.prepareStatement("INSERT INTO public.game_info (n_rounds, n_draws, winner, player_rounds_won, ai1_rounds_won, ai2_rounds_won, ai3_rounds_won, ai4_rounds_won) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+//            st.setInt(1, currentRound);
+//            st.setInt(2, draws);
+//            st.setString(3, winningPlayer.getName());
+//            st.setInt(4, players.get(0).getNumOfRoundsWon());
+//            st.setInt(5, players.get(1).getNumOfRoundsWon());
+//            st.setInt(6, players.get(2).getNumOfRoundsWon());
+//            st.setInt(7, players.get(3).getNumOfRoundsWon());
+//            st.setInt(8, players.get(4).getNumOfRoundsWon());
 //            st.executeUpdate();
 //            
 //            
@@ -222,22 +221,22 @@ public class MainMethod {
 //            String n_rounds = null;
 //            String n_draws = null;
 //            String winner = null;
-//            String player1_wins = null;
-//            String player2_wins = null;
-//            String player3_wins = null;
-//            String player4_wins = null;
-//            String player5_wins = null;
+//            String player_wins = null;
+//            String ai1_wins = null;
+//            String ai2_wins = null;
+//            String ai3_wins = null;
+//            String ai4_wins = null;
 //            
 //            while (resultSet.next()) {
 //            	game_id = resultSet.getString("game_id");
 //                n_rounds = resultSet.getString("n_rounds");
 //                n_draws = resultSet.getString("n_draws");
 //                winner = resultSet.getString("winner");
-//                player1_wins = resultSet.getString("player1_rounds_won");
-//                player2_wins = resultSet.getString("player2_rounds_won");
-//                player3_wins = resultSet.getString("player3_rounds_won");
-//                player4_wins = resultSet.getString("player4_rounds_won");
-//                player5_wins = resultSet.getString("player5_rounds_won");
+//                player_wins = resultSet.getString("player_rounds_won");
+//                ai1_wins = resultSet.getString("ai1_rounds_won");
+//                ai2_wins = resultSet.getString("ai2_rounds_won");
+//                ai3_wins = resultSet.getString("ai3_rounds_won");
+//                ai4_wins = resultSet.getString("ai4_rounds_won");
 //            	
 //            	System.out.println("Game ID: " + game_id);
 //            	System.out.println("Winner: "+ winner);
