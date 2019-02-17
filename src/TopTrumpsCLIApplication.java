@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.logging.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -19,16 +20,19 @@ public class TopTrumpsCLIApplication {
 	
 	private static final String PLAYER = "Player";
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SecurityException, IOException {
+		Logger log = Logger.getLogger("testlog");
+		FileHandler fh=new FileHandler("toptrumps.log");
+		testLog(log,fh) ;
 
 		int numPlayers = 5;
         List<Card> cards = getDeckFromFile();
+        
+        wirteContentsofCard(cards,log);
+        
         Collections.shuffle(cards);
         List<CardPlayer> players = new ArrayList<CardPlayer>();
-       
-		
 		TopTrumpsCLIApplication topTrumps = new TopTrumpsCLIApplication();
-		
 		boolean writeGameLogsToFile = false; // Should we write game logs to file?
 		//if (args[0].equalsIgnoreCase("true")) writeGameLogsToFile=true; // Command line selection
 		
@@ -51,8 +55,8 @@ public class TopTrumpsCLIApplication {
 	            }
 	        }
 	        else if(choice.equals("2")) {
-	        	topTrumps.giveCardsToPlayers(players, cards, numPlayers);
-	            topTrumps.startGame(players, numPlayers);
+	        	topTrumps.giveCardsToPlayers(players, cards, numPlayers,log);
+	            topTrumps.startGame(players, numPlayers,log);
 	           
 	        }
 	        else if(choice.equals("quit")) {
@@ -61,15 +65,26 @@ public class TopTrumpsCLIApplication {
 	        }
 	        }
 	        input.close();
+	        
 	        System.exit(0);
+	        fh.close();
+	       
 	}
 			// ----------------------------------------------------
 			// import java.io.BufferedReader
 	            
-	          
-	            
-	            
-	            
+	       public static void testLog(Logger log,FileHandler fh) throws SecurityException, IOException {	    	   
+	    	   log.setLevel(Level.ALL);	    	   
+	           fh.setLevel(Level.ALL);
+	           log.addHandler(fh);	          
+	       }
+	       
+	       private static void wirteContentsofCard(List<Card> cards,Logger log) {
+	    	   log.info("Contents of constructed cards: ");
+	    	   for(Card card:cards) {
+	    		   log.info(card.toString());
+	    	   }    	   
+	       }
 	            private static List<Card> getDeckFromFile() {
 	            	List<Card> cards = new ArrayList<Card>();
 	            	try (BufferedReader br = new BufferedReader(new FileReader("StarCitizenDeck.txt"))) {
@@ -93,7 +108,7 @@ public class TopTrumpsCLIApplication {
 	            
 	            
 	            
-	            private static CardPlayer doBattle(List<CardPlayer> players, Attribute attribute) {
+	            private static CardPlayer doBattle(List<CardPlayer> players, Attribute attribute,Logger log) {
 	            	List<CardPlayer> drawnPlayers = new ArrayList<>();
 	                CardPlayer winningPlayer = null;
 	            	int maxValue = 0;
@@ -104,6 +119,9 @@ public class TopTrumpsCLIApplication {
 	            		}
 	            		Card card = player.getFirstCard();
 	            		System.out.println("{" + player.getDeck().size() + "} " + player.getName() + " " + card);
+	            		
+	            		log.info(player.getName()+": "+card.toString());  //current card
+	            		
 	            		int attributeValue = card.getAttributeValue(attribute);
 	            		if (attributeValue > maxValue) {
 	            			winningPlayer = player;
@@ -133,7 +151,7 @@ public class TopTrumpsCLIApplication {
 	            
 	            
 	            
-	            public void giveCardsToPlayers(List<CardPlayer> players, List<Card> cards, int numPlayers) {
+	            public void giveCardsToPlayers(List<CardPlayer> players, List<Card> cards, int numPlayers,Logger log) {
 	           
 	            	
 	            	 System.out.println("----------------------------------------------"
@@ -151,11 +169,13 @@ public class TopTrumpsCLIApplication {
 	            		}
 	                	for (int j = i * (cards.size()/numPlayers); j < (i+1) * (cards.size()/numPlayers); j++) {
 	                		players.get(i).addCard(cards.get(j));
+	                		
+	                		log.info("Contents of shuffled cards: ");
+	                		log.info(players.get(i).getName()+": "+cards.get(j).toString()); //contents of each player's card after shuffled
 	                	}
 	                }
 	            	
 	                int nextCard = (cards.size() / numPlayers) * numPlayers;
-	                
 	                int nextPlayer = 0;
 	                while (nextCard < cards.size()) {
 	                	players.get(nextPlayer).addCard(cards.get(nextCard));
@@ -164,7 +184,7 @@ public class TopTrumpsCLIApplication {
 	                }
 	            }
 	            
-	            private void startGame(List<CardPlayer> players, int numPlayers) {
+	            private void startGame(List<CardPlayer> players, int numPlayers,Logger log) {
 	            	CardPlayer activePlayer = players.get(new Random().nextInt(numPlayers));
 	            	List<Card> cardsAfterDraw = new ArrayList<Card>();
 	            	CardPlayer winningPlayer = null;
@@ -173,26 +193,35 @@ public class TopTrumpsCLIApplication {
 	            	System.out.println("----------------------------------------------");
 	            	while (true) {
 	            		System.out.println("Round: " + currentRound);
+	            		
+	            		log.info("----------------------------------------------"); //each round is recorded separately in the log
+	            		
 	            		System.out.println("Trumping player is: " + activePlayer.getName());
 	                	if (PLAYER.equals(activePlayer.getName())) {
 	                		System.out.println("Your card is: " + activePlayer.getFirstCard());
 	                		System.out.println("Choose attribute: ");
-	                		Attribute attribute = getAttributeFromPlayer();
-	                		winningPlayer = doBattle(players, attribute);
+	                		Attribute attribute = getAttributeFromPlayer(log);
+	                		winningPlayer = doBattle(players, attribute,log);
 	                	} else {
 	                		System.out.println("Their card is: " + activePlayer.getFirstCard());
 	                		System.out.println("Their attribute choice is: " + activePlayer.getFirstCard().getHighestAttribute());
-	                		winningPlayer = doBattle(players, activePlayer.getFirstCard().getHighestAttribute());
+	                		winningPlayer = doBattle(players, activePlayer.getFirstCard().getHighestAttribute(),log);
 	                	}
-	                	sortOutCardsAfterBattle(players, winningPlayer, cardsAfterDraw);
+	                	sortOutCardsAfterBattle(players, winningPlayer, cardsAfterDraw,log);
 	                	System.out.println("Number of cards in the pile: {" + cardsAfterDraw.size() + "}");
+	                	
+	                	log.info("contents of communal pile: ");
+	                	for(Card card:cardsAfterDraw) {   //show contents of communal pile
+	                		log.info(card.toString());
+	                	}
+	                	
 	                	System.out.println("----------------------------------------------");
 	                	if (winningPlayer != null) {
 	                		activePlayer = winningPlayer;
 	                	} else {
 	                		draws++;
 	                	}
-	                	checkIfGameHasEnded(players, currentRound++, draws);
+	                	checkIfGameHasEnded(players, currentRound++, draws,log);
 	                	//make the thread sleep for 2 seconds between executions
 	                	//so the human player can follow the flow of events
 	                	try {
@@ -202,18 +231,17 @@ public class TopTrumpsCLIApplication {
 	                     }
 	            	}
 	            	
-	            	
 	            }
 	           
 	            
-	            private static void checkIfGameHasEnded(List<CardPlayer> players, int currentRound, int draws) {
+	            private static void checkIfGameHasEnded(List<CardPlayer> players, int currentRound, int draws,Logger log) {
 	            	int activePlayers = 0;
 	            	CardPlayer lastActivePlayer = null;
 	            	for (CardPlayer player : players) {
 	            		if (!player.hasLost()) {
 	            			activePlayers++;
 	            			lastActivePlayer = player;
-	            		}
+	            		}	
 	            	}
 	            	
 	            	if (activePlayers == 1) {
@@ -221,6 +249,7 @@ public class TopTrumpsCLIApplication {
 	            		System.out.println("The winner is: " + lastActivePlayer.getName());
 	            		saveToDatabase(players, lastActivePlayer, currentRound, draws);
 	            		saveToFile(players, lastActivePlayer, currentRound, draws);
+	            		log.info("Winner: "+lastActivePlayer.getName());   //log of winner         
 	            		System.exit(0);
 	            	}
 	            }
@@ -367,7 +396,8 @@ public class TopTrumpsCLIApplication {
 	                }
 	            }
 
-	            private static void sortOutCardsAfterBattle(List<CardPlayer> players, CardPlayer winningPlayer, List<Card> cardsAfterDraw) {
+	            private static void sortOutCardsAfterBattle(List<CardPlayer> players, CardPlayer winningPlayer, List<Card> cardsAfterDraw,Logger log) {
+	            	
 	            	if (winningPlayer == null) {
 	            		for (CardPlayer player : players) {
 	            			if (player.hasLost()) {
@@ -392,11 +422,20 @@ public class TopTrumpsCLIApplication {
 	        				player.hasLost(true);
 	        			}
 	        		}
+	            	log.info("contents of decks after allocated: ");  //log
+	            	List<Card> cards=null;
+	            	for(CardPlayer player : players) {
+	            		cards=player.getDeck();
+	            		for(Card card:cards) {
+	            			log.info(player.getName()+": "+card.toString());
+	            		}
+	            	}
+	            	
 	            }
 	            
 	            
 	            
-	            private static Attribute getAttributeFromPlayer() {
+	            private static Attribute getAttributeFromPlayer(Logger log) {
 	            	
 	            	while (true) {
 	            		Scanner reader = new Scanner(System.in);
@@ -404,11 +443,15 @@ public class TopTrumpsCLIApplication {
 	            		try {
 	                		Attribute attribute = Attribute.getValue(input);
 	                		System.out.println("You chose: " + attribute.toString());
+	                		
+	                		log.info("selected category and vaule: "+attribute.toString());
+	                		
 	                		return attribute;
 	                	} catch (Exception e) {
 	                		System.out.println("That's an invalid attribute, try again!");
 	                	}
 	            	}
+	            	
 	            }
 	            
 	            private static void saveToFile(List<CardPlayer> players, CardPlayer winningPlayer, int currentRound, int draws) {
