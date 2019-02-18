@@ -1,5 +1,6 @@
 
 import java.util.Scanner;
+import java.util.logging.*;
 import java.io.BufferedReader;
 import java.util.logging.*;
 import java.io.FileReader;
@@ -27,13 +28,16 @@ public class TopTrumpsCLIApplication {
 
 		int numPlayers = 5;
         List<Card> cards = getDeckFromFile();
+<<<<<<< HEAD
         writeContentsofCard(cards,log);
+=======
+        
+        wirteContentsofCard(cards,log);
+        
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
         Collections.shuffle(cards);
         List<CardPlayer> players = new ArrayList<CardPlayer>();
-       
-		
 		TopTrumpsCLIApplication topTrumps = new TopTrumpsCLIApplication();
-		
 		boolean writeGameLogsToFile = false; // Should we write game logs to file?
 		//if (args[0].equalsIgnoreCase("true")) writeGameLogsToFile=true; // Command line selection
 		
@@ -56,8 +60,13 @@ public class TopTrumpsCLIApplication {
 	            }
 	        }
 	        else if(choice.equals("2")) {
+<<<<<<< HEAD
 	        	topTrumps.giveCardsToPlayers(players, cards, numPlayers, log);
 	            topTrumps.startGame(players, numPlayers, log);
+=======
+	        	topTrumps.giveCardsToPlayers(players, cards, numPlayers,log);
+	            topTrumps.startGame(players, numPlayers,log);
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	           
 	        }
 	        else if(choice.equals("quit")) {
@@ -66,12 +75,18 @@ public class TopTrumpsCLIApplication {
 	        }
 	        }
 	        input.close();
+	        
 	        System.exit(0);
 	        fh.close();
+<<<<<<< HEAD
+=======
+	       
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	}
 			// ----------------------------------------------------
 			// import java.io.BufferedReader
 	            
+<<<<<<< HEAD
 	          
 	             public static void testLog(Logger log,FileHandler fh) throws SecurityException, IOException {	    	   
  	                 //log.setLevel(Level.ALL);	    	   
@@ -87,6 +102,20 @@ public class TopTrumpsCLIApplication {
                  }
 	            
 	            
+=======
+	       public static void testLog(Logger log,FileHandler fh) throws SecurityException, IOException {	    	   
+	    	   log.setLevel(Level.ALL);	    	   
+	           fh.setLevel(Level.ALL);
+	           log.addHandler(fh);	          
+	       }
+	       
+	       private static void wirteContentsofCard(List<Card> cards,Logger log) {
+	    	   log.info("Contents of constructed cards: ");
+	    	   for(Card card:cards) {
+	    		   log.info(card.toString());
+	    	   }    	   
+	       }
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	            private static List<Card> getDeckFromFile() {
 	            	List<Card> cards = new ArrayList<Card>();
 	            	try (BufferedReader br = new BufferedReader(new FileReader("StarCitizenDeck.txt"))) {
@@ -110,7 +139,11 @@ public class TopTrumpsCLIApplication {
 	            
 	            
 	            
+<<<<<<< HEAD
 	            private static CardPlayer doBattle(List<CardPlayer> players, Attribute attribute, Logger log) {
+=======
+	            private static CardPlayer doBattle(List<CardPlayer> players, Attribute attribute,Logger log) {
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	            	List<CardPlayer> drawnPlayers = new ArrayList<>();
 	                CardPlayer winningPlayer = null;
 	            	int maxValue = 0;
@@ -120,8 +153,15 @@ public class TopTrumpsCLIApplication {
 	            			continue;
 	            		}
 	            		Card card = player.getFirstCard();
+<<<<<<< HEAD
 	            		System.out.println("Player deck size:{" + player.getDeck().size() + "} " + player.getName() + " " + card);
 	            		log.info(player.getName()+": "+card.toString());  //current card
+=======
+	            		System.out.println("{" + player.getDeck().size() + "} " + player.getName() + " " + card);
+	            		
+	            		log.info(player.getName()+": "+card.toString());  //current card
+	            		
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	            		int attributeValue = card.getAttributeValue(attribute);
 	            		if (attributeValue > maxValue) {
 	            			winningPlayer = player;
@@ -151,7 +191,11 @@ public class TopTrumpsCLIApplication {
 	            
 	            
 	            
+<<<<<<< HEAD
 	            public void giveCardsToPlayers(List<CardPlayer> players, List<Card> cards, int numPlayers, Logger log) {
+=======
+	            public void giveCardsToPlayers(List<CardPlayer> players, List<Card> cards, int numPlayers,Logger log) {
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	           
 	            	
 	            	 System.out.println("----------------------------------------------"
@@ -176,7 +220,6 @@ public class TopTrumpsCLIApplication {
 	                }
 	            	
 	                int nextCard = (cards.size() / numPlayers) * numPlayers;
-	                
 	                int nextPlayer = 0;
 	                while (nextCard < cards.size()) {
 	                	players.get(nextPlayer).addCard(cards.get(nextCard));
@@ -185,7 +228,11 @@ public class TopTrumpsCLIApplication {
 	                }
 	            }
 	            
+<<<<<<< HEAD
 	            private void startGame(List<CardPlayer> players, int numPlayers, Logger log) {
+=======
+	            private void startGame(List<CardPlayer> players, int numPlayers,Logger log) {
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	            	CardPlayer activePlayer = players.get(new Random().nextInt(numPlayers));
 	            	List<Card> cardsAfterDraw = new ArrayList<Card>();
 	            	CardPlayer winningPlayer = null;
@@ -194,6 +241,7 @@ public class TopTrumpsCLIApplication {
 	            	System.out.println("----------------------------------------------");
 	            	while (true) {
 	            		System.out.println("Round: " + currentRound);
+<<<<<<< HEAD
 	            		log.info("----------------------------------------------"); //each round is recorded separately in the log
 	            		System.out.println("Trumping player is: " + activePlayer.getName());
 	                	if (PLAYER.equals(activePlayer.getName())) {
@@ -205,6 +253,15 @@ public class TopTrumpsCLIApplication {
 									+ "\t4. Firepower\n"
 									+ "\t5. Cargo\n"
 									+ "Enter the number of the chosen attribute: ");
+=======
+	            		
+	            		log.info("----------------------------------------------"); //each round is recorded separately in the log
+	            		
+	            		System.out.println("Trumping player is: " + activePlayer.getName());
+	                	if (PLAYER.equals(activePlayer.getName())) {
+	                		System.out.println("Your card is: " + activePlayer.getFirstCard());
+	                		System.out.println("Choose attribute: ");
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	                		Attribute attribute = getAttributeFromPlayer(log);
 	                		winningPlayer = doBattle(players, attribute,log);
 	                	} else {
@@ -214,17 +271,29 @@ public class TopTrumpsCLIApplication {
 	                	}
 	                	sortOutCardsAfterBattle(players, winningPlayer, cardsAfterDraw,log);
 	                	System.out.println("Number of cards in the pile: {" + cardsAfterDraw.size() + "}");
+<<<<<<< HEAD
+=======
+	                	
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	                	log.info("contents of communal pile: ");
 	                	for(Card card:cardsAfterDraw) {   //show contents of communal pile
 	                		log.info(card.toString());
 	                	}
+<<<<<<< HEAD
+=======
+	                	
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	                	System.out.println("----------------------------------------------");
 	                	if (winningPlayer != null) {
 	                		activePlayer = winningPlayer;
 	                	} else {
 	                		draws++;
 	                	}
+<<<<<<< HEAD
 	                	checkIfGameHasEnded(players, currentRound++, draws, log);
+=======
+	                	checkIfGameHasEnded(players, currentRound++, draws,log);
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	                	//make the thread sleep for 2 seconds between executions
 	                	//so the human player can follow the flow of events
 	                	try {
@@ -234,18 +303,21 @@ public class TopTrumpsCLIApplication {
 	                     }
 	            	}
 	            	
-	            	
 	            }
 	           
 	            
+<<<<<<< HEAD
 	            private static void checkIfGameHasEnded(List<CardPlayer> players, int currentRound, int draws, Logger log) {
+=======
+	            private static void checkIfGameHasEnded(List<CardPlayer> players, int currentRound, int draws,Logger log) {
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	            	int activePlayers = 0;
 	            	CardPlayer lastActivePlayer = null;
 	            	for (CardPlayer player : players) {
 	            		if (!player.hasLost()) {
 	            			activePlayers++;
 	            			lastActivePlayer = player;
-	            		}
+	            		}	
 	            	}
 	            	
 	            	if (activePlayers == 1) {
@@ -253,7 +325,11 @@ public class TopTrumpsCLIApplication {
 	            		System.out.println("The winner is: " + lastActivePlayer.getName());
 	            		saveToDatabase(players, lastActivePlayer, currentRound, draws);
 	            		saveToFile(players, lastActivePlayer, currentRound, draws);
+<<<<<<< HEAD
 	            		log.info("Winner: "+lastActivePlayer.getName());   //log of winner 
+=======
+	            		log.info("Winner: "+lastActivePlayer.getName());   //log of winner         
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	            		System.exit(0);
 	            	}
 	            }
@@ -390,7 +466,12 @@ public class TopTrumpsCLIApplication {
 	                }
 	            }
 
+<<<<<<< HEAD
 	            private static void sortOutCardsAfterBattle(List<CardPlayer> players, CardPlayer winningPlayer, List<Card> cardsAfterDraw, Logger log) {
+=======
+	            private static void sortOutCardsAfterBattle(List<CardPlayer> players, CardPlayer winningPlayer, List<Card> cardsAfterDraw,Logger log) {
+	            	
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	            	if (winningPlayer == null) {
 	            		for (CardPlayer player : players) {
 	            			if (player.hasLost()) {
@@ -423,6 +504,10 @@ public class TopTrumpsCLIApplication {
 	            			log.info(player.getName()+": "+card.toString());
 	            		}
 	            	}
+<<<<<<< HEAD
+=======
+	            	
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	            }
 	            
 	            
@@ -435,12 +520,19 @@ public class TopTrumpsCLIApplication {
 	            		try {
 	                		Attribute attribute = Attribute.getValue(input);
 	                		System.out.println("You chose: " + attribute.toString());
+<<<<<<< HEAD
 	                		log.info("selected category and vaule: "+attribute.toString());
+=======
+	                		
+	                		log.info("selected category and vaule: "+attribute.toString());
+	                		
+>>>>>>> 89f27bdd4d5d491a151b70534ab13e45ed5e547a
 	                		return attribute;
 	                	} catch (Exception e) {
 	                		System.out.println("That's an invalid attribute, try again!");
 	                	}
 	            	}
+	            	
 	            }
 	            
 	            private static void saveToFile(List<CardPlayer> players, CardPlayer winningPlayer, int currentRound, int draws) {
