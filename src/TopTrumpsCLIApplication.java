@@ -34,6 +34,8 @@ public class TopTrumpsCLIApplication {
 		
 		TopTrumpsCLIApplication topTrumps = new TopTrumpsCLIApplication();
 		
+		//this part of the template has not been utilised
+		//Instead, we have allowed the markers to comment/uncomment line 77 in order to start/stop the Log
 		boolean writeGameLogsToFile = false; // Should we write game logs to file?
 		//if (args[0].equalsIgnoreCase("true")) writeGameLogsToFile=true; // Command line selection
 		
@@ -74,15 +76,15 @@ public class TopTrumpsCLIApplication {
 	
 	             public static void testLog(Logger log,FileHandler fh) throws SecurityException, IOException {	    	   
  	                 log.setLevel(Level.ALL);	  
-	            	 log.setLevel(Level.WARNING); //uncomment this line in order to stop Test Log
+	            	 log.setLevel(Level.WARNING); //comment line 77 in order to start Test Log
                      fh.setLevel(Level.ALL);
                      log.addHandler(fh);	          
                  }
 
                  private static void writeContentsofCard(List<Card> cards,Logger log) {
- 	                 //log.info("Contents of constructed cards: ");
+ 	                 log.info("Contents of constructed cards: ");
  	                 for(Card card:cards) {
- 		                 //log.info(card.toString());
+ 		                 log.info(card.toString());
  	                 }    	   
                  }
 	            
@@ -255,7 +257,7 @@ public class TopTrumpsCLIApplication {
 	                		System.out.println("Please wait until the AI plots their evil game strategy"
 	                				           +"\n--------------------------------------------------------");
 	                		                 
-	                		Thread.sleep(4000);
+	                		Thread.sleep(3000);
 	                    } catch(InterruptedException ex){
 	                         Thread.currentThread().interrupt();
 	                      }
@@ -338,37 +340,9 @@ public class TopTrumpsCLIApplication {
 	                    st.setInt(8, players.get(4).getNumOfRoundsWon());
 	                    st.executeUpdate();
 	                    
-	                    
-	                    /** Query for Selecting data from the table and printing it **/
-	                    String query = "SELECT * FROM public.game_info ORDER BY game_id DESC LIMIT 1";
-	                    ResultSet resultSet = statement.executeQuery(query);
-	                    
-	                    String game_id = null;
-	                    String n_rounds = null;
-	                    String n_draws = null;
-	                    String winner = null;
-	                    String player_wins = null;
-	                    String ai1_wins = null;
-	                    String ai2_wins = null;
-	                    String ai3_wins = null;
-	                    String ai4_wins = null;
-	                    
-	                    while (resultSet.next()) {
-	                    	game_id = resultSet.getString("game_id");
-	                        n_rounds = resultSet.getString("n_rounds");
-	                        n_draws = resultSet.getString("n_draws");
-	                        winner = resultSet.getString("winner");
-	                        player_wins = resultSet.getString("player_rounds_won");
-	                        ai1_wins = resultSet.getString("ai1_rounds_won");
-	                        ai2_wins = resultSet.getString("ai2_rounds_won");
-	                        ai3_wins = resultSet.getString("ai3_rounds_won");
-	                        ai4_wins = resultSet.getString("ai4_rounds_won");
-	                    	
-	                    	System.out.println("Game ID: " + game_id);
-	                    	System.out.println("Winner: "+ winner);
-	                    	System.out.println("Number of rounds: " + n_rounds);
-	                    	System.out.println("-------------------");
-	                    }
+	      
+	               
+	                  
 	                    
 	                    System.out.println("Finished fetching the data.");
 	                    
@@ -391,32 +365,45 @@ public class TopTrumpsCLIApplication {
 	                	Class.forName("org.postgresql.Driver");	                    
 	                    Statement statement = connection.createStatement();
 	                    
-	                    //Query 1: Number of total games.
-	                    String totalGamesQuery = "SELECT COUNT(*) FROM public.game_info";
-	                    ResultSet resultSet = statement.executeQuery(totalGamesQuery);
-	                    int totalGames = resultSet.getInt(0);
-	                    System.out.println("Total games played so far: " + Integer.toString(totalGames));
-	                    
-	                    //Query 2: Human vs AI wins.
-	                    String humanWinsQuery = "SELECT COUNT(*) FROM public.game_info WHERE winner=Player";
-	                    resultSet = statement.executeQuery(humanWinsQuery);
-	                    int humanWins = resultSet.getInt(0);
-	                    int AIWins = totalGames - humanWins;
-	                    System.out.println("Human wins: " + Integer.toString(humanWins));
-	                    System.out.println("AI wins: " + Integer.toString(AIWins));
-	                    
-	                    //Query 3: Average number of draws.
-	                    String drawnGamesQuery = "SELECT SUM(n_draws) FROM public.game_info";
-	                    resultSet = statement.executeQuery(drawnGamesQuery);
-	                    double totalDraws = resultSet.getInt(0);
-	                    double averageDraws = totalDraws / (double) totalGames ;
-	                    System.out.println("Average draws per game: " + Double.toString(averageDraws));
-	                    
-	                    //Query 4: Longest game played so far.
-	                    String longestGameQuery = "SELECT MAX(n_rounds) FROM public.game_info";
-	                    resultSet = statement.executeQuery(longestGameQuery);
-	                    int longestGame = resultSet.getInt(0);
-	                    System.out.println("Most rounds played in a game: " + Integer.toString(longestGame));
+	                  //Query 1: Number of total games.
+                        String totalGamesQuery = "SELECT COUNT(*) FROM public.game_info";
+                        ResultSet resultSet = statement.executeQuery(totalGamesQuery);
+                        int totalGames = 0;
+                        while(resultSet.next()){
+                            totalGames = resultSet.getInt(1);  
+                        }
+                        System.out.println("Total games played so far: " + Integer.toString(totalGames));
+                       
+                        //Query 2: Human vs AI wins.
+                        String humanWinsQuery = "SELECT COUNT(*) FROM public.game_info WHERE winner=\'Player\'";
+                        resultSet = statement.executeQuery(humanWinsQuery);
+                        int humanWins = 0;
+                        int AIWins = 0;
+                        while(resultSet.next()){
+                            humanWins = resultSet.getInt(1);
+                            AIWins = totalGames - humanWins;
+                        }
+                        System.out.println("Human wins: " + Integer.toString(humanWins));
+                        System.out.println("AI wins: " + Integer.toString(AIWins));
+                       
+                        //Query 3: Average number of draws.
+                        String drawnGamesQuery = "SELECT SUM(n_draws) FROM public.game_info";
+                        resultSet = statement.executeQuery(drawnGamesQuery);
+                        double averageDraws = 0.0;
+                        while(resultSet.next()){
+                            double totalDraws = resultSet.getInt(1);
+                            averageDraws = totalDraws / (double) totalGames ;
+                        }
+                        System.out.println("Average draws per game: " + Double.toString(averageDraws));                        
+                       
+                       
+                        //Query 4: Longest game played so far.
+                        String longestGameQuery = "SELECT MAX(n_rounds) FROM public.game_info";
+                        resultSet = statement.executeQuery(longestGameQuery);
+                        while(resultSet.next()){
+                            int longestGame = resultSet.getInt(1);
+                            System.out.println("Most rounds played in a game: " + Integer.toString(longestGame));                          
+                        }
 	                    
 	                 } catch (SQLException e) {
 	                	System.out.println("Connection Failure!");
