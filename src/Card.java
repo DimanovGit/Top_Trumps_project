@@ -54,7 +54,11 @@ public class Card {
 	}
 	
 	public String toString() {
-		return description + " " + getSize() + " " + getSpeed() + " " + getRange() + " " + getFirepower() + " " + getCargo();
+		return description + "\nSize: " + getSize() 
+		                   + "\nSpeed: " + getSpeed() 
+		                   + "\nRange " + getRange()
+		                   + "\nFirepower: " + getFirepower()
+		                   + "\nCargo " + getCargo();
 	}
 	
 }    
