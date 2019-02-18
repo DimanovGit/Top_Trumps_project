@@ -40,7 +40,7 @@ public class TopTrumpsCLIApplication {
 		// State
 		boolean userWantsToQuit = false; // flag to check whether the user wants to quit the application
 		
-		// Loop until the user wants to exit the game
+//=========================Start Menu Logic=========================
 		while(!userWantsToQuit) {
 	        System.out.println("\nDo you want to see past results or play a game?\n"
 	                + "\t1: Print Game Statistics\n\t2: Play game\n"
@@ -68,14 +68,14 @@ public class TopTrumpsCLIApplication {
 	        System.exit(0);
 	        fh.close();
 	}
-			// ----------------------------------------------------
-			// import java.io.BufferedReader
 	            
-	          
+//=========================Test Log Methods=========================
+	
 	             public static void testLog(Logger log,FileHandler fh) throws SecurityException, IOException {	    	   
- 	                 //log.setLevel(Level.ALL);	    	   
+ 	                 log.setLevel(Level.ALL);	  
+	            	 log.setLevel(Level.WARNING); //uncomment this line in order to stop Test Log
                      fh.setLevel(Level.ALL);
-                     //log.addHandler(fh);	          
+                     log.addHandler(fh);	          
                  }
 
                  private static void writeContentsofCard(List<Card> cards,Logger log) {
@@ -85,7 +85,7 @@ public class TopTrumpsCLIApplication {
  	                 }    	   
                  }
 	            
-	            
+         //Method for extracting the cards and their attributes from the Deck file 
 	            private static List<Card> getDeckFromFile() {
 	            	List<Card> cards = new ArrayList<Card>();
 	            	try (BufferedReader br = new BufferedReader(new FileReader("StarCitizenDeck.txt"))) {
@@ -108,7 +108,15 @@ public class TopTrumpsCLIApplication {
 	            }
 	            
 	            
-	            
+//=========================Battle Method=========================  
+/* This method loops through the array of players. It compares
+ * the values of the trumping attributes of the cards they drew from the top of their decks
+ * in order to estimate which one has the highest value. 
+ * If two or more players have equal highest value attributes, then  	            
+ * they are added to a list of drawnPlayers. 
+ * The method returns an object which shows which player won the round.
+ * 
+ */
 	            private static CardPlayer doBattle(List<CardPlayer> players, Attribute attribute, Logger log) {
 	            	List<CardPlayer> drawnPlayers = new ArrayList<>();
 	                CardPlayer winningPlayer = null;
@@ -149,6 +157,11 @@ public class TopTrumpsCLIApplication {
 	            }
 	            
 	            
+/*Method that is responsible for dealing the cards
+ * amongst the players. The method takes into account the number of players,
+ * and deals an equal(or close to equal) amount of cards to each one. The index within
+ * the loop increments until it reaches the end of the array of cards.
+ */
 	            
 	            public void giveCardsToPlayers(List<CardPlayer> players, List<Card> cards, int numPlayers, Logger log) {
 	           
@@ -183,7 +196,18 @@ public class TopTrumpsCLIApplication {
 	                	nextCard++;
 	                }
 	            }
-	            
+	   
+//=========================Main Game Logic=========================
+/*The game starts by using the Random Java class to determine the first
+ * trumping player. After each draw each player's deck(array of cards)
+ * is updated to show the remainder of cards. Newly acquired cards through
+ * round victories go at the end of the array. A while loop runs and
+ * produces new rounds during which the doBattle method is used
+ * to determine the winner. The loop runs and produces new rounds
+ * until a helper method indicates that there is only one active player
+ * remaining which means that the game has ended.  
+ * 	            
+ */
 	            private void startGame(List<CardPlayer> players, int numPlayers, Logger log) {
 	            	CardPlayer activePlayer = players.get(new Random().nextInt(numPlayers));
 	            	List<Card> cardsAfterDraw = new ArrayList<Card>();
@@ -236,6 +260,12 @@ public class TopTrumpsCLIApplication {
 	            	
 	            }
 	           
+/* A method that is used to check whether there is
+ * only one active player remaining which means that the game has ended.
+ * If so, then the values of the variables are passed onto
+ * the methods which are used to save statistics for the output file
+ * and the database.
+ */
 	            
 	            private static void checkIfGameHasEnded(List<CardPlayer> players, int currentRound, int draws, Logger log) {
 	            	int activePlayers = 0;
@@ -258,6 +288,10 @@ public class TopTrumpsCLIApplication {
 	            }
 	            
 	            
+/*
+ * Once the while loop stops values of different variables are passed onto
+ * the database and output file.	            
+ */
 	            private static void saveToDatabase(List<CardPlayer> players, CardPlayer winningPlayer, int currentRound, int draws) {
 	                
 	            	System.out.println("----------------------------------------------");
@@ -380,16 +414,26 @@ public class TopTrumpsCLIApplication {
 	                    int longestGame = resultSet.getInt(0);
 	                    System.out.println("Most rounds played in a game: " + Integer.toString(longestGame));
 	                    
-	                } catch (SQLException e) {
+	                 } catch (SQLException e) {
 	                	System.out.println("Connection Failure!");
 	                	e.printStackTrace();
-	                } catch (ClassNotFoundException e) {
+	                 } catch (ClassNotFoundException e) {
 	                	System.out.println("PostgreSQL JDBC driver not found!");
 	                	e.printStackTrace();
-	                }
+	                 }
 	            }
 
-	            private static void sortOutCardsAfterBattle(List<CardPlayer> players, CardPlayer winningPlayer, List<Card> cardsAfterDraw, Logger log) {
+/*
+ * This method sorts out individual players' decks after one round is completed.
+ * In the beginning of each round the top card which has position 0 in the array
+ * is removed from the deck(array). The winning player adds all the cards that were
+ * drawn in this round to their deck in the end of the round. The method also checks
+ * whether a player's deck is empty which has been set as a condition for defeat.
+ * Once there are no cards remaining in the deck the particular player no longer
+ * takes part into the battles. 
+ */
+	            
+	           private static void sortOutCardsAfterBattle(List<CardPlayer> players, CardPlayer winningPlayer, List<Card> cardsAfterDraw, Logger log) {
 	            	if (winningPlayer == null) {
 	            		for (CardPlayer player : players) {
 	            			if (player.hasLost()) {
@@ -422,11 +466,11 @@ public class TopTrumpsCLIApplication {
 	            			log.info(player.getName()+": "+card.toString());
 	            		}
 	            	}
-	            }
+	           }
 	            
 	            
 	            
-	            private static Attribute getAttributeFromPlayer(Logger log) {
+	           private static Attribute getAttributeFromPlayer(Logger log) {
 	            	
 	            	while (true) {
 	            		Scanner reader = new Scanner(System.in);
